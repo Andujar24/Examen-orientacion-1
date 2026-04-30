@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test de Orientación y Psicología — Concurso de Oposición Docente</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ec;
+    --surface: #ffffff;
+    --surface2: #f0ece3;
+    --accent: #1a6b4a;
+    --accent2: #d4a843;
+    --text: #1c1c1a;
+    --text2: #5a5a54;
+    --text3: #8a8a82;
+    --border: rgba(0,0,0,0.1);
+    --correct: #e8f5e0;
+    --correct-border: #5a9e30;
+    --correct-text: #2d5c12;
+    --wrong: #fde8e8;
+    --wrong-border: #d44;
+    --wrong-text: #922;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .page-header {
+    background: var(--accent);
+    color: white;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+  }
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(20px, 4vw, 32px);
+    margin-bottom: 4px;
+    font-weight: 400;
+  }
+  .page-header p { font-size: 14px; opacity: 0.8; }
+  .container { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .progress-wrap { background: rgba(0,0,0,0.1); border-radius: 99px; height: 6px; margin: 1.5rem 0 1rem; }
+  .progress-fill { background: var(--accent2); height: 6px; border-radius: 99px; transition: width 0.4s; }
+  .stats-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .stat-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 5px 14px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .stat-pill b { color: var(--accent); }
+  .question-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .q-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .q-text {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 14px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.5;
+  }
+  .opt-btn:hover:not(:disabled) { background: #e8e4da; border-color: var(--accent); }
+  .opt-btn .lbl {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .opt-btn.correct { background: var(--correct); border-color: var(--correct-border); color: var(--correct-text); }
+  .opt-btn.correct .lbl { background: var(--correct); border-color: var(--correct-border); color: var(--correct-text); }
+  .opt-btn.wrong { background: var(--wrong); border-color: var(--wrong-border); color: var(--wrong-text); }
+  .opt-btn.wrong .lbl { background: var(--wrong); border-color: var(--wrong-border); color: var(--wrong-text); }
+  .opt-btn:disabled { cursor: default; }
+  .feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .feedback.ok { background: var(--correct); color: var(--correct-text); border-left: 3px solid var(--correct-border); }
+  .feedback.err { background: var(--wrong); color: var(--wrong-text); border-left: 3px solid var(--wrong-border); }
+  .nav-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text);
+    transition: background 0.15s;
+  }
+  .btn:hover { background: var(--surface2); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+  .btn.primary:hover { background: #145a3c; }
+  .btn.gold {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: white;
+  }
+  .btn.gold:hover { background: #b8922e; }
+  .jump-row { display: flex; gap: 6px; align-items: center; margin-left: auto; }
+  .jump-row label { font-size: 13px; color: var(--text3); }
+  .jump-row input {
+    width: 58px;
+    padding: 8px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+  }
+  /* Results */
+  .results-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .results-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem auto;
+  }
+  .score-num { font-size: 32px; font-weight: 600; line-height: 1; }
+  .score-denom { font-size: 13px; opacity: 0.8; }
+  .pct-text { font-size: 22px; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .msg { font-size: 15px; color: var(--text2); margin-bottom: 1.5rem; }
+  .results-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+  .wrong-section { text-align: left; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+  .wrong-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 1rem; color: var(--text); }
+  .wrong-item {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: var(--surface2);
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .wrong-item .wq { font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .wrong-item .wa { color: var(--wrong-text); }
+  .wrong-item .wc { color: var(--correct-text); }
+  @media (max-width: 480px) {
+    .page-header { padding: 1.5rem 1rem 1rem; }
+    .question-card { padding: 1.25rem; }
+    .jump-row { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Test de Orientación y Psicología</h1>
+  <p>Concurso de Oposición Docente · Lic. Alexis Junior Torres Alejo</p>
+</div>
+
+<div class="container">
+  <div id="app"></div>
+</div>
+
+<script>
+const questions = [
+  {q:"El tipo de pregunta que debe aprender a formular a estudiantes para incentivar el pensamiento crítico y el aprendizaje independiente está dirigido a:",opts:["Estimular la búsqueda profunda","Estimular la reflexión y la búsqueda de diversas respuestas","Estimular la reflexión en el estudiante","Ninguna de las anteriores"],ans:1},
+  {q:"La evaluación formativa debe ir acompañada de retroalimentación. Para que sea efectiva y descriptiva el docente debe:",opts:["Identificar los logros de desempeño, áreas a mejorar y buscar rutas para lograrlo","Desarrollar la fase de ejecución del plan diario","Fijarse metas a corto plazo y cumplirlas","Ninguna de las anteriores"],ans:0},
+  {q:"¿Qué evaluación específica de carácter interdisciplinario aplica el psicólogo del centro para determinar las necesidades de los estudiantes y las ayudas requeridas?",opts:["Inicial o diagnóstica","No aplica","Final o de monitoreo","Ninguna de las anteriores"],ans:0},
+  {q:"Un referente esencial para tomar decisiones en la fase de seguimiento, regulación y control durante la implementación de los planes de ajuste curriculares individualizados es:",opts:["Registro de grados","Registro escolar","Registro de planificación","Ninguna de las anteriores"],ans:1},
+  {q:"Para articular las actividades de aula con la finalidad educativa de los estudiantes a través de un aprendizaje situado, debe diseñar situaciones de aprendizaje basado en la:",opts:["Participación del estudiante en el cronograma semanal","Participación del estudiante en las actividades de manera autónoma","Participación del estudiante en las actividades del centro educativo asignado","Ninguna de las anteriores"],ans:1},
+  {q:"El taller dirigido a docentes para reducir la barrera de comunicación con niños que presentan necesidades específicas del lenguaje oral o escrito se llama:",opts:["Uso de recursos didácticos","Uso concienzudo del reglamento escolar","Uso de recurso pictograma","Ninguna de las anteriores"],ans:2},
+  {q:"¿Cuál es el componente del proyecto educativo de centro elaborado por el departamento de psicología con participación de toda la comunidad escolar?",opts:["Norma selectiva","Norma de convivencia","Orden departamental","Ninguna de las anteriores"],ans:1},
+  {q:"Al departamento de orientación y psicología se le asignó elaborar una propuesta de plan tutorial. Debe:",opts:["Establecer líneas de apoyo","Establecer la línea de actuación para dar respuesta a la problemática detectada","Establecer líneas de intervención para situaciones similares","Ninguna de las anteriores"],ans:1},
+  {q:"¿Cuál es el componente básico de la labor del psicólogo orientado a talleres sobre violencia intrafamiliar y prevención de riesgos psicosociales?",opts:["Apoyo a la familia","Apoyo social","Apoyo psicopedagógico","Todas las anteriores"],ans:3},
+  {q:"¿Cuál es el indicador que puede funcionar como alerta para remitir a un niño a evaluación psicopedagógica externa?",opts:["Resultado del segundo ciclo","Resultado del tercer ciclo","Resultado de aprendizaje esperado dos años por debajo del grado","Ninguna de las anteriores"],ans:2},
+  {q:"En el aprendizaje autónomo, ¿en qué característica el estudiante emplea estrategias cognitivas y metacognitivas para construir conocimientos?",opts:["Memorización de conceptos","Memorización de temas detallados","Memorización de retroalimentación","Ninguna de las anteriores"],ans:3},
+  {q:"¿Cuál es el principal paso para ayudar a los estudiantes a lograr aprendizajes mediante la integración con otras áreas?",opts:["Elegir las mejores estrategias","Elegir las estrategias, conceptos y áreas para articularlos","Elegir los conceptos articulados","Ninguna de las anteriores"],ans:1},
+  {q:"La estimulación del propio desarrollo integral y la determinación sobre sus aprendizajes son dos características de un aprendizaje:",opts:["Compartido","Individual","Social","Ninguna de las anteriores"],ans:0},
+  {q:"¿Qué apoya esencialmente al desarrollo integral del estudiante su participación en el análisis de los resultados de su evaluación?",opts:["La automotivación autónoma","Reconocer sus errores","Conciencia sobre sus debilidades y fijación de metas para superarlas","Ninguna de las anteriores"],ans:2},
+  {q:"¿Qué impacto genera el monitoreo del proceso educativo en la gestión pedagógica de los docentes?",opts:["Se investiga el contexto","Se obtiene la información necesaria para el seguimiento al desarrollo educativo","Se obtiene lo necesario para seguir con la fase de monitoreo","Ninguna de las anteriores"],ans:1},
+  {q:"Previo al inicio del año escolar la unidad de orientación y psicología, como parte del equipo de gestión, deberá programar acciones correspondientes a:",opts:["Socializar con los estudiantes los estatutos del centro","Fase de ejecución","Socializar con los estudiantes el reglamento disciplinario","Fase diagnóstica"],ans:3},
+  {q:"Luego de aplicar una prueba observa que la mayoría de sus estudiantes contestó incorrectamente la misma pregunta. Debe:",opts:["Desarrollar actividades complementarias y talleres","Desarrollar actividades psicopedagógicas","Desarrollar actividades complementarias y de ampliación","Ninguna de las anteriores"],ans:2},
+  {q:"¿Cuál es la medida clave para la prevención e intervención a estudiantes con historial de fracaso escolar en el marco del enfoque inclusivo?",opts:["Trabajo con los estudiantes","Trabajo con la familia","Trabajo comunitario","Trabajo con los docentes"],ans:1},
+  {q:"Los psicólogos participan con docentes en talleres sobre gramática textual para reforzar la lectoescritura, fortaleciendo el:",opts:["Liderazgo psico-social","Acción de liderazgo","Liderazgo pedagógico","Todas las anteriores"],ans:2},
+  {q:"El diseño de operatividad del programa del departamento de psicología debe estar fundamentado en los enfoques:",opts:["Humanista, constructivista y por competencia","Constructivista","Humanista","Por competencia"],ans:0},
+  {q:"¿Cuál enfoque pedagógico parte de las capacidades, habilidades, valores y actitudes para actuar en contextos diversos de forma autónoma, reflexiva y crítica?",opts:["No aplica","Por voluntad propia","Por competencia","Por esfuerzo"],ans:2},
+  {q:"¿Cuál enfoque pedagógico promueve una mirada reflexiva de la realidad propiciando que en el proceso de aprendizaje sea cuestionada y problematizada?",opts:["Asegurarle la confinación","Asegurar la confiabilidad","Apoyo emocional","Todas las anteriores"],ans:1},
+  {q:"¿Cuál es el componente básico de la labor del psicólogo donde se implementan charlas sobre estilos de autoridad en el marco de la disciplina positiva?",opts:["Apoyo psicopedagógico","Apoyo financiero","Apoyo escolar","Ninguna de las anteriores"],ans:0},
+  {q:"Para superar una situación de bullying, la medida del psicólogo para fortalecer competencias emocionales y restaurar la convivencia es:",opts:["Promover el uso de la comunicación pasiva","Promover el uso de la comunicación abierta","Promover el uso de la comunicación asertiva","Ninguna de las anteriores"],ans:2},
+  {q:"El psicólogo participa en talleres reflexivos para mejorar los procesos de enseñanza tomando en cuenta los resultados de:",opts:["La evaluación psicopedagógica","La evaluación y monitoreo final","La evaluación semanal","La fase diagnóstica"],ans:0},
+  {q:"¿Cuáles son los aspectos fundamentales del aprendizaje significativo de los estudiantes?",opts:["Experiencias previas, contexto social y práctica cultural","Retroalimentación al iniciar un tema","Experiencia social","Lluvias de ideas"],ans:0},
+  {q:"Cuando en un contexto escolar hay una situación confirmada de abuso sexual, las autoridades del centro están obligadas a:",opts:["Realizar una social con los padres","Convocar a la comunidad estudiantil","Realizar una reunión con los padres","Ninguna de las anteriores"],ans:2},
+  {q:"Aprender a cooperar activamente es el tipo de estrategia más eficaz para que los estudiantes desarrollen:",opts:["Auto-aprendizaje","Autonomía","Su propia competencia y la de sus compañeros","Todas las anteriores"],ans:2},
+  {q:"¿Qué acción formativa coordinada por el psicólogo apoya estrategias para promover actitudes de liderazgo y colaboración entre pares?",opts:["Organizar diálogo irreflexivo","Organizar diálogo reflexivo","Coordinar diálogo exclusivo","Todas las anteriores"],ans:1},
+  {q:"¿Cómo se denomina el área que promueve la participación e integración de la comunidad educativa en procesos que vinculan el centro con su entorno?",opts:["Formación humana","Formación académica","Formación religiosa","Formación ética"],ans:0},
+  {q:"Un ambiente escolar que contribuye al aprendizaje y desarrollo integral debe ser:",opts:["Adecuado al proceso áulico sin considerar opiniones e intereses del grupo","Adecuado al proceso áulico, considerando opiniones, intereses y creatividad del grupo","Sistemático y suave","Ninguna de las anteriores"],ans:1},
+  {q:"¿Cuál es la manera más eficiente para desarrollar un clima de valoración entre los estudiantes mediante destrezas de comunicación lingüística?",opts:["La escucha de respuesta de sus intereses","Uso de vocabulario apropiado","Uso de vocabulario apropiado y escucha respuesta de sus intereses","Ninguna de las anteriores"],ans:2},
+  {q:"Al desarrollar un tema para que los estudiantes logren aprendizajes significativos usted debe verificar:",opts:["Retroalimentación","Lluvia de ideas","Los saberes previos para conectarlos con los nuevos","Todas las anteriores"],ans:2},
+  {q:"El psicólogo utiliza informaciones y evaluaciones psicopedagógicas para tomar decisiones con los docentes en elaboración de:",opts:["Los proyectos de intervención familiares","Los proyectos de centros","Los proyectos de intervención de aula","Ninguna de las anteriores"],ans:2},
+  {q:"¿Qué ordenanza sustituye los comités de cursos y asociación de padres, madres, tutores y amigos de la escuela?",opts:["Ordenanza 8-1000 actualizada","Ordenanza 9-2000 modificada","Orden departamental","Estatuto docente"],ans:0},
+  {q:"Consciente de que entre los estudiantes existe diversidad de necesidades y destrezas, debe:",opts:["Diseñar ambientes de experiencias de aprendizaje","Diseñar experiencias de aprendizaje inclusivo","Diseñar ambientes y experiencias de aprendizajes inclusivos y abarcadores","Ninguna de las anteriores"],ans:2},
+  {q:"El aprendizaje cooperativo favorece la adquisición de competencias lingüísticas, sociales y cívicas obedeciendo a factores como:",opts:["Comunicación","Motivación","Desarrollo cognitivo","Todas las anteriores"],ans:3},
+  {q:"El tipo de pregunta para incrementar el pensamiento crítico e independiente está dirigida a:",opts:["Dejarlo que caigan","Estimular el pensamiento no lateral","Estimular la reflexión de diversa respuesta","Ninguna de las anteriores"],ans:2},
+  {q:"El aprendizaje cooperativo es la estrategia más eficaz para que los estudiantes desarrollen:",opts:["Su propia competencia","La competencia de sus compañeros","Su propia competencia y la de sus compañeros","Ninguna de las anteriores"],ans:2},
+  {q:"¿Cuál es el aspecto fundamental que permite al psicólogo planificar psicopedagógicamente para responder a las diversas realidades socioculturales?",opts:["Valoración del contexto educativo","Valoración de planificación","Valoración del contexto situacional","Ninguna de las anteriores"],ans:0},
+  {q:"¿Cuál es la función del psicólogo mediante la cual ofrece pautas y técnicas psicopedagógicas para orientar la elaboración de planes de mejora?",opts:["Asesoramiento sobre diversificación curricular","Taller de psicopedagogía","Asesoramiento académico","Ninguna de las anteriores"],ans:0},
+  {q:"El director seleccionó el centro para ofrecer servicios de apoyo a los aprendizajes. El psicólogo debe:",opts:["Realizar un plan específico para el centro","Realizar un diagnóstico para identificar la población estudiantil en el segundo ciclo que necesita el servicio","Realizar un diagnóstico para identificar la población comunitaria en el primer ciclo","Ninguna de las anteriores"],ans:1},
+  {q:"El psicólogo como agente de atención primaria frente a la violencia escolar tiene como objetivo:",opts:["Favorecer los ambientes protectores en la comunidad","Favorecer los ambientes protectores en la familia, escuela y la comunidad","Favorecer los ambientes protectores en la familia","Ninguna de las anteriores"],ans:1},
+  {q:"¿Cuál actividad es planificada por el departamento de psicología como parte del fortalecimiento a la participación estudiantil?",opts:["Taller sobre el concurso de oposición docente 2022","Taller sobre hábitos de estudios","Talleres de planificación estratégica","Todas las anteriores"],ans:1},
+  {q:"Componente clave que permite al psicólogo reflexionar sobre su práctica desde una perspectiva de desarrollo personal y profesional:",opts:["Auto-ayuda","Autoevaluación","Autoretrospección","Todas las anteriores"],ans:1},
+  {q:"¿Cuál es el conjunto de estrategias del psicólogo para proponer adecuaciones a la enseñanza tomando en cuenta características y necesidades de los estudiantes?",opts:["Línea de intervención","Ejes temáticos","Intervención psicopedagógica","Ninguna de las anteriores"],ans:2},
+  {q:"Las charlas del psicólogo sobre desarrollo comunicacional para fortalecer los procesos de aprendizaje se contemplan en:",opts:["Apoyo psicosocial","Apoyo psicopedagógico","Refuerzo","Todas las anteriores"],ans:1},
+  {q:"El tipo de cuestionamiento más apropiado para probar la interpretación de ideas y conceptos científicos está basado en preguntas que:",opts:["Estimulan el pensamiento inquisitivo","Estimulan el pensamiento adquisitivo hacia la búsqueda de diversas respuestas","Estimulación sensorial","Ninguna de las anteriores"],ans:1},
+  {q:"Los docentes deben aplicar evaluaciones formativas porque estas:",opts:["Superan sus debilidades","Identifican de forma continua sus necesidades y mejoran","Reconocen sus errores","Ninguna de las anteriores"],ans:1},
+  {q:"La acción de sensibilización del departamento de psicología encargada de elaborar medidas formativas corresponde al componente:",opts:["Apoyo comunicativo","Apoyo de interés","Apoyo psicopedagógico","Todas las anteriores"],ans:2},
+  {q:"¿Cuál es el proceso de reflexión que constituye el eje y recurso por excelencia de la formación personal y profesional de los psicólogos?",opts:["La evaluación final","La autoevaluación de su propia práctica","La evaluación cognitiva","Ninguna de las anteriores"],ans:1},
+  {q:"La planificación del proceso educativo ha de estar abierta a:",opts:["Apoyo a la comunidad docente","Adecuación a las necesidades de apoyo y características del contexto","Apoyo a la comunidad, al psicólogo y orientador","Ninguna de las anteriores"],ans:1},
+  {q:"¿Qué función esencial de la planificación está relacionada con los ajustes curriculares individualizados desde un enfoque inclusivo?",opts:["Asegurar la coherencia entre las intenciones educativas y la práctica docente","Asegurar el diseño y ejecución de la planificación","Asegurar la evaluación diagnóstica","Ninguna de las anteriores"],ans:0},
+  {q:"El tipo de liderazgo donde el equipo de gestión aprovecha las competencias de la comunidad educativa estimulando un clima de colaboración es:",opts:["Socio crítico","Socio","Crítico","Ninguna de las anteriores"],ans:0},
+  {q:"Un ambiente escolar que contribuye al aprendizaje y desarrollo integral debe ser:",opts:["Tranquilo y equilibrado","Recurrente y ameno","Actuando al proceso áulico considerando opiniones, intereses y creatividad del grupo","Todas las anteriores"],ans:2},
+  {q:"Según el protocolo de UNICEF, una responsabilidad del psicólogo frente a la familia en una situación de bullying es:",opts:["Elaborar un plan tutorial (seguimiento)","Elaborar un plan maestro definitivo","Elaborar un plan de actividades","Elaborar un plan semanal"],ans:0},
+  {q:"Un estudiante contesta erróneamente una pregunta que usted hace a todo el grupo. Lo correcto es:",opts:["Déjeselo de tarea","Dé ejemplos una y otra vez hasta que entienda","Dé ejemplos y haga otra pregunta que lo guíe a la respuesta correcta","Ninguna de las anteriores"],ans:2},
+  {q:"Usted evalúa en sus estudiantes el nivel de desarrollo de competencias específicas utilizando criterios de fuentes de información:",opts:["Contenido de la planificación","Contenido asertivo","Contenidos conceptuales","Ninguna de las anteriores"],ans:2},
+  {q:"¿Qué implica que el docente valore, respete y atienda la diversidad en su aula?",opts:["No tomar en cuenta diferencias culturales ni sensoriales","Tomar en cuenta su indiferencia cultural","Tomar en cuenta sus diferencias culturales y sensoriales","Ninguna de las anteriores"],ans:2},
+  {q:"¿Cómo se llama la medida correctiva aplicada por el docente por interrupciones innecesarias según la ordenanza 4-99?",opts:["Amonestación verbal semipública","Amonestación verbal privada","Amonestación verbal pública","Ninguna de las anteriores"],ans:2},
+  {q:"Cuando el equipo de gestión necesita tomar decisiones ante evidencias del proceso educativo debe:",opts:["Permitir tomar decisiones de mejora a partir de las evidencias","Analizar la situación","Esperar orden del distrito","No tomar ninguna decisión"],ans:0},
+  {q:"La maestra planifica según el enfoque constructivista tomando en cuenta capacidades, intereses y necesidades individuales para:",opts:["Autonomía propia","Desarrollo de habilidades cognitivas","Desarrollar las competencias","Todas las anteriores"],ans:2},
+  {q:"Luego de 4 semanas de nivelación, los docentes reportaron niños que no completaron el pensum. El psicólogo debe:",opts:["Elaborar un plan mensual","Elaborar un plan tutorial o tutorías con los docentes","Elaborar un plan semanal","Elaborar un plan anual"],ans:1},
+  {q:"Desde un enfoque inclusivo, la evaluación favorece la regulación y ajuste del aprendizaje para:",opts:["Desarrollar el plan de ejecución","Identificar los recursos de apoyo que requieren","Identificar los recursos naturales","Ninguna de las anteriores"],ans:1},
+  {q:"¿Qué principio del programa Cultura de Paz orienta las intervenciones para que las víctimas no tengan que revivir la experiencia negativa?",opts:["Si re-victimización","Re-victimización","No re-victimización","Ninguna de las anteriores"],ans:2},
+  {q:"De los siguientes medios tecnológicos, ¿cuál es el más útil y confiable para el nivel secundario?",opts:["Revista científica escolar, página web de instituciones educativas, redes sociales","Página web y revistas digitales","Portafolio escolar","Ninguna de las anteriores"],ans:0},
+  {q:"¿Qué actividad coordina el departamento de psicología para promover las expectativas de estudiantes con bajo rendimiento escolar?",opts:["Desarrollo de competencia","Desarrollo de autonomía en el aprendizaje","Desarrollo de habilidades cognitivas","Ninguna de las anteriores"],ans:1},
+  {q:"¿Cuáles son los aspectos fundamentales para la planificación del aprendizaje significativo?",opts:["Práctica cultural","Experiencias previas, contexto social y práctica cultural","Experiencias previas","Todas las anteriores"],ans:1},
+  {q:"Para articular las actividades del aula con la realidad contextual a través de un aprendizaje situado, debe diseñar situaciones basado en la:",opts:["Construcción de experiencias de aprendizaje productivo y eficiente","Construcción de experiencias de saberes proactivos","Experiencias previas","Todas las anteriores"],ans:0},
+  {q:"La planificación del psicólogo en su rol de apoyo a la familia contempla como acción prioritaria la conformación de:",opts:["La escuela de padres","Consejo educativo","Coordinación de orientación","Ninguna de ellas"],ans:0},
+  {q:"¿Cuál es el tipo de evaluación aplicada por el psicólogo que permite a los estudiantes valorar sus aprendizajes y dificultades durante el proceso educativo?",opts:["Autoayuda","Autoevaluación","Optimismo","Ninguna de las anteriores"],ans:1},
+  {q:"La estimulación del propio desarrollo integral y la determinación sobre sus aprendizajes son dos características de un aprendizaje:",opts:["Mediado","Corto","Largo","Ninguna de las anteriores"],ans:0},
+  {q:"¿Cómo se llama la medida que garantiza las condiciones que aborda los derechos y responsabilidades de los niños y adolescentes?",opts:["Garantiza la protección de los derechos del estudiante","Garantiza la protección de los derechos del niño","Garantiza la protección de los derechos humanos","Ninguna de las anteriores"],ans:1},
+  {q:"Para fortalecer la investigación y creatividad, asignó una tarea sobre cómo piensan los jóvenes acerca de sus relaciones. El recurso indicado es:",opts:["Grabación de entrevista y edición de video","Grabación de talleres sociales","Grabación de entrevista","Grabación de edición de video"],ans:0},
+  {q:"¿Cuál es la acción formativa que asume el psicólogo en el desarrollo de tareas del estudiante?",opts:["Propician la participación en actividades extracurriculares","Propician la participación en actividades culturales","Propician la participación en actividades familiares","Ninguna de las anteriores"],ans:0},
+  {q:"¿Cuál es el componente de la labor del psicólogo que contempla la orientación sobre adaptaciones individuales ofrecidas a docentes?",opts:["Apoyo al desarrollo del psicólogo","Apoyo al desarrollo del docente","Apoyo al desarrollo del estudiante","Apoyo al desarrollo del orientador"],ans:1},
+  {q:"¿Cuál fase de la planificación de la unidad de psicología permite realizar una radiografía del centro actualizada constantemente?",opts:["Fase de ejecución","Fase de diseño y planificación","Fase de monitoreo","Fase diagnóstica"],ans:3},
+  {q:"Una medida ética para hacer frente a situaciones de acoso escolar con estudiantes observadores y testigos es:",opts:["Evaluación diagnóstica","Fase de monitoreo","Información sobre la medida adecuada para la situación","Ninguna de las anteriores"],ans:2},
+  {q:"¿Qué acción marca las relaciones respetuosas en el aula contribuyendo a la disciplina?",opts:["Referirse a cada niño por su nombre propio","Ponerle un apodo bonito","Referirse a cada niño con su nombre de pila","Ninguna de las anteriores"],ans:2},
+  {q:"La actitud profesional que debe tener el psicólogo para guiar al estudiante en su proceso formativo es:",opts:["Manejo y resolución de conflicto","Manejo de conflicto","Resolución de problemas","Ninguna de las anteriores"],ans:0},
+  {q:"La planificación del proceso educativo debe estar abierta a:",opts:["Atención a los conserjes","Atención a docentes, maestros, orientadores y psicólogos","Atención a las necesidades de apoyo con características del contexto","Todas las anteriores"],ans:2},
+  {q:"¿Cuál es el principio del código de ética relacionado con el derecho a la privacidad, autodeterminación y autonomía de los individuos?",opts:["Respeto a la dignidad de la persona","Respeto a los estudiantes","Respeto a la psicología","Ninguna de las anteriores"],ans:0},
+  {q:"¿Qué técnica es más eficaz para desarrollar un ambiente de aprendizaje entre iguales en el aula?",opts:["Actividades de línea de intervención","Actividades que generan las interacciones entre pares o grupos","Actividades que generan las interacciones entre entes sociales","Ninguna de las anteriores"],ans:1},
+  {q:"¿Qué prueba aplica el psicólogo al inicio del año para detectar potenciales barreras de aprendizaje?",opts:["Prueba de inteligencia","Prueba de estrés","Prueba de CI","Todas las demás"],ans:0},
+  {q:"¿Cuál es el principal compromiso para que la planificación de la enseñanza-aprendizaje sea efectiva?",opts:["Diseñando ambientes educativos respetando las capacidades y necesidades","Diseñando ambientes educativos de acuerdo al orientador","Diseñando ambientes educativos de acuerdo al psicólogo","Ninguna de las anteriores"],ans:0},
+  {q:"¿Cuál ley contempla en sus artículos la participación de manera transversal en todos los ámbitos del contexto educativo formal y no formal?",opts:["Reglamento estudiantil","Ley general de educación 66-97","Ley del estatuto docente","Ley 4-2000"],ans:1},
+  {q:"La afirmación de que cada persona tiene una forma única de percibir y procesar la información es correcta debido a:",opts:["La diferencia de dominancia sensoriales y cerebrales","No aplica","La diferente dominancia cerebrales","La diferente dominancia sensoriales"],ans:0},
+  {q:"¿Qué debe priorizar en la planificación para atender la diversidad y lograr la construcción de aprendizaje significativo?",opts:["No aplica","Utilización de los recursos naturales","Utilización de los recursos didácticos adecuados al contenido del currículo","Todas las anteriores"],ans:2},
+  {q:"¿Cuáles instituciones sociales deben fomentar la participación de todos los niños según el artículo 136-03 del código de protección?",opts:["La familia","La sociedad, la escuela y la familia","La escuela","La sociedad"],ans:1},
+  {q:"¿Cómo se denomina el principio pedagógico del rol del adulto que consiste en crear situaciones y ambientes cálidos, seguros y acogedores?",opts:["Autonomía","Autoayuda","Baja autoestima","Ninguna de las anteriores"],ans:0},
+  {q:"El diseño de la planificación de aprendizaje debe contar con una estructura flexible especialmente para:",opts:["Ajustar el currículo de acuerdo al parecer del psicólogo u orientador","Realizar cambios en función de la realidad educativa y del contexto social escolar","Apoyar al docente","Todas las anteriores"],ans:1},
+  {q:"El componente básico del psicólogo en el que se coordina con autoridades sanitarias es:",opts:["Coordinación de conserje","Prevención de faltas graves","Prevención de riesgo psicosocial","Ninguna de las anteriores"],ans:2},
+  {q:"Usted evalúa en sus estudiantes el nivel de desarrollo de competencias utilizando criterios de fuentes de información:",opts:["Indicadores de logros","Evaluación y monitoreo","Evaluación diagnóstica","Todas las anteriores"],ans:0},
+  {q:"¿Cuál es la acción del componente apoyo al desarrollo de los estudiantes que el psicólogo desarrolla para ayudar a niños con necesidades específicas?",opts:["Ofrecer charlas lucrativas","Ofrecer charlas sociales","Ofrecer charlas motivacionales","Todas las anteriores"],ans:2},
+  {q:"El psicólogo evalúa su práctica de forma científica para promover la reflexión conjunta mostrando:",opts:["Evidencia verificable","Evidencias verbales","Recursos de planificación","Ninguna de las anteriores"],ans:0},
+  {q:"¿Qué debe priorizar en la planificación para atender la diversidad y lograr la construcción de aprendizaje significativo?",opts:["Identificación de las diferentes colectivas y ajustar a estas","Identificación de las diferencias grupales","Identificación de las diferencias individuales de cada uno y ajustarlas","Todas las anteriores"],ans:2},
+  {q:"¿Cuál es la acción del equipo de gestión como parte del proceso de transformación hacia una cultura escolar inclusiva?",opts:["Capacitar a los psicólogos","Capacitar permanentemente a los docentes sobre la atención a la diversidad","Capacitar a los empleados","Capacitar a los conserjes"],ans:1},
+  {q:"¿Cuál es la ciencia en la que se apoya el psicólogo para evaluar el impacto sobre el manejo de obstáculos del aprendizaje de una segunda lengua?",opts:["Psicopedagogía","Psicolingüística","Psicoanálisis","Todas las anteriores"],ans:1},
+  {q:"El comportamiento y decisiones de los docentes influyen en el desarrollo formativo. Por tanto, deben demostrar habilidades sociales especialmente de:",opts:["Ser ejemplo de buen comportamiento y mantenerse equilibrado","Actuar con criterio propio","Comportamiento aprendido","Ninguna de las anteriores"],ans:0},
+  {q:"¿Cuál es la intervención pedagógica orientada a los padres sobre recursos de apoyo emocional para reforzar el sentimiento de seguridad de sus hijos?",opts:["Conducta positiva","Desarrollo académico","Crianza positiva","Ninguna de las anteriores"],ans:2}
+];
+
+const labels = ['A','B','C','D'];
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+let submitted = new Array(questions.length).fill(false);
+let score = 0;
+let finished = false;
+
+function render() {
+  const app = document.getElementById('app');
+  if (finished) { renderResults(); return; }
+  const q = questions[current];
+  const pct = Math.round(((current+1)/questions.length)*100);
+  const done = submitted.filter(Boolean).length;
+
+  app.innerHTML = `
+    <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="stats-row">
+      <div class="stat-pill">Pregunta <b>${current+1} / ${questions.length}</b></div>
+      <div class="stat-pill">Correctas <b>${score}</b></div>
+      <div class="stat-pill">Respondidas <b>${done}</b></div>
+    </div>
+    <div class="question-card">
+      <div class="q-label">Pregunta ${current+1}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((opt,i) => {
+          let cls = 'opt-btn';
+          if (submitted[current]) {
+            if (i === q.ans) cls += ' correct';
+            else if (answers[current] === i) cls += ' wrong';
+          }
+          return `<button class="${cls}" onclick="pick(${i})" ${submitted[current]?'disabled':''}><span class="lbl">${labels[i]}</span>${opt}</button>`;
+        }).join('')}
+      </div>
+      ${submitted[current] ? `<div class="feedback ${answers[current]===q.ans?'ok':'err'}">
+        ${answers[current]===q.ans ? '✓ ¡Correcto!' : `✗ Incorrecto. La respuesta correcta es: <b>${labels[q.ans]}) ${q.opts[q.ans]}</b>`}
+      </div>` : ''}
+    </div>
+    <div class="nav-row">
+      <button class="btn" onclick="go(-1)" ${current===0?'disabled':''}>← Anterior</button>
+      <button class="btn" onclick="go(1)" ${current===questions.length-1?'disabled':''}>Siguiente →</button>
+      ${done===questions.length ? `<button class="btn gold" onclick="finish()">Ver resultados →</button>` : ''}
+      <div class="jump-row">
+        <label>Ir a:</label>
+        <input type="number" id="ji" min="1" max="${questions.length}" placeholder="N°" />
+        <button class="btn" onclick="jump()">Ir</button>
+      </div>
+    </div>
+  `;
+}
+
+function pick(i) {
+  if (submitted[current]) return;
+  answers[current] = i;
+  submitted[current] = true;
+  if (i === questions[current].ans) score++;
+  render();
+}
+
+function go(d) {
+  current = Math.max(0, Math.min(questions.length-1, current+d));
+  render();
+}
+
+function jump() {
+  const v = parseInt(document.getElementById('ji').value);
+  if (v >= 1 && v <= questions.length) { current = v-1; render(); }
+}
+
+function finish() { finished = true; render(); }
+
+function renderResults() {
+  const app = document.getElementById('app');
+  const pct = Math.round(score/questions.length*100);
+  const msg = pct>=90?'¡Excelente preparación para el concurso!':pct>=70?'¡Buen resultado, sigue repasando!':pct>=50?'Hay áreas importantes por reforzar.':'Se recomienda repasar todo el material.';
+  const wrong = questions.map((q,i)=>({q,i,ua:answers[i]})).filter(x=>x.ua!==x.q.ans);
+
+  app.innerHTML = `
+    <div class="results-card">
+      <h2>Resultado Final</h2>
+      <div class="score-circle">
+        <div class="score-num">${score}</div>
+        <div class="score-denom">de ${questions.length}</div>
+      </div>
+      <div class="pct-text">${pct}%</div>
+      <div class="msg">${msg}</div>
+      <div class="results-actions">
+        <button class="btn primary" onclick="restart()">Reiniciar examen</button>
+      </div>
+      ${wrong.length>0?`
+      <div class="wrong-section">
+        <h3>Preguntas incorrectas (${wrong.length})</h3>
+        ${wrong.map(x=>`
+          <div class="wrong-item">
+            <div class="wq">P${x.i+1}: ${x.q.q}</div>
+            <div class="wa">Tu respuesta: ${x.ua!==null?labels[x.ua]+') '+x.q.opts[x.ua]:'Sin responder'}</div>
+            <div class="wc">✓ Correcta: ${labels[x.q.ans]}) ${x.q.opts[x.q.ans]}</div>
+          </div>
+        `).join('')}
+      </div>`:'<p style="color:#2d5c12;font-weight:500;margin-top:1rem">🎉 ¡Respondiste todo correctamente!</p>'}
+    </div>
+  `;
+}
+
+function restart() {
+  current=0; answers=new Array(questions.length).fill(null);
+  submitted=new Array(questions.length).fill(false);
+  score=0; finished=false; render();
+}
+
+render();
+</script>
+</body>
+</html>
